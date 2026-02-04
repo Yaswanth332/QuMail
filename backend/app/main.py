@@ -9,8 +9,9 @@ app = FastAPI(title="QuMail Backend", version="1.0.0")
 
 # 🔴 CORS MUST COME HERE — BEFORE ROUTERS
 origins = [
-    "https://qumailcom.vercel.app",  # Added EXACT failing origin
-    "https://qu-mail-mkdo.vercel.app", # Kept existing just in case
+    "https://qumailcom.vercel.app",
+    "https://qumailcom.vercel.app/", # Added trailing slash variant
+    "https://qu-mail-mkdo.vercel.app",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
