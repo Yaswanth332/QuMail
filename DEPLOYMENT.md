@@ -15,15 +15,14 @@ This separates the frontend and backend onto free hosting tiers.
 7. **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port 10000`
 8. Copy the **URL** Render gives you (e.g., `https://qumail-backend.onrender.com`).
 
-### **Frontend (Vercel or Netlify)**
-1. Go to `frontend/src/api.js` and update `API_URL` to your new Render Backend URL:
-   ```javascript
-   export const API_URL = 'https://qumail-backend.onrender.com/api'; 
-   ```
-2. Commit and push this change.
-3. Sign up for [Vercel](https://vercel.com).
-4. **Import Project** -> Select your GitHub repo.
-5. **Root Directory**: Edit and select `frontend`.
+### **Frontend (Vercel)**
+1. **No Code Changes Needed**: We updated `api.js` to automatically use the `VITE_API_URL` environment variable.
+2. Sign up for [Vercel](https://vercel.com).
+3. **Import Project** -> Select your GitHub repo.
+4. **Root Directory**: Click Edit and select `frontend`.
+5. **Environment Variables**:
+   - Name: `VITE_API_URL`
+   - Value: Your Render Backend URL (e.g., `https://qumail-backend.onrender.com/api`)
 6. Click **Deploy**.
 7. Vercel will give you a live URL (e.g., `https://qumail.vercel.app`).
 
