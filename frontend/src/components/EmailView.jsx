@@ -183,7 +183,7 @@ const EmailView = ({ email, onBack, onReply, onForward, onDelete }) => {
                         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: '#00ff88', boxShadow: '0 0 15px #00ff88' }}></div>
                         <div style={{ opacity: 0.6, marginBottom: '10px' }}>&gt; INCOMING QUANTUM STREAM...</div>
                         <div style={{ opacity: 0.6, marginBottom: '10px' }}>&gt; VERIFYING QKD SIGNATURE...</div>
-                        <div style={{ opacity: 1, marginBottom: '20px', color: '#fff' }}>[ LOCKED ] Payloaded Encrypted with {email.encryption_level === 'otp' ? 'ONE-TIME PAD' : 'AES-GCM-256'}</div>
+                        <div style={{ opacity: 1, marginBottom: '20px', color: '#fff' }}>[ LOCKED ] Payloaded Encrypted with {(email.encryption_level === 'otp' || email.encryption_level === 'otp_client') ? 'ONE-TIME PAD' : 'AES-GCM-256'}</div>
 
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(20px, 1fr))', gap: '2px', opacity: 0.3, filter: 'blur(0.5px)' }}>
                             {Array(600).fill(0).map((_, i) => (
@@ -211,7 +211,7 @@ const EmailView = ({ email, onBack, onReply, onForward, onDelete }) => {
                                         <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Verified Quantum Secure Connection</span>
                                     </div>
                                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                                        {email.encryption_level === 'otp' ? 'PROTOCOL: OTP-512' : 'PROTOCOL: AES-256-GCM'}
+                                        {(email.encryption_level === 'otp' || email.encryption_level === 'otp_client') ? 'PROTOCOL: OTP-512' : 'PROTOCOL: AES-256-GCM'}
                                     </div>
                                 </div>
 

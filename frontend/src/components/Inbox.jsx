@@ -257,7 +257,7 @@ const Inbox = ({ onSelectEmail, folder = 'inbox' }) => {
                             {/* Security Badge */}
                             <div>
                                 {e.is_encrypted ? (
-                                    (e.encryption_level === 'otp' || e.encryption_level === 'client_otp') ?
+                                    (e.encryption_level === 'otp' || e.encryption_level === 'otp_client') ?
                                         <span style={{
                                             color: '#00ff88', fontSize: '0.7rem', fontWeight: 'bold',
                                             border: '1px solid #00ff88', padding: '4px 10px', borderRadius: '20px',

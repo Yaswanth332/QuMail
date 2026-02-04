@@ -111,8 +111,8 @@ const ProfileMenu = ({ userEmail }) => {
 };
 
 const Dashboard = () => {
-    // Default view 'compose' to match the screenshot context
-    const [view, setView] = useState('compose');
+    // Default view 'inbox' as requested
+    const [view, setView] = useState('inbox');
     const [selectedEmail, setSelectedEmail] = useState(null);
     const userEmail = localStorage.getItem('user_email') || 'guest@qumail.com';
     const [mockQKDKey, setMockQKDKey] = useState(null); // Just for demo state
@@ -197,8 +197,7 @@ const Dashboard = () => {
                     {/* Divider */}
                     <div style={{ width: '1px', height: '24px', background: '#333' }}></div>
 
-                    {/* Apps Grid (Google Style) */}
-                    <div style={{ fontSize: '1.2rem', color: '#999', cursor: 'pointer', padding: '8px' }} title="QuMail Apps">⋮⋮⋮</div>
+
 
                     {/* Profile Avatar */}
                     <ProfileMenu userEmail={userEmail} />

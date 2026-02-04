@@ -333,17 +333,19 @@ const Compose = ({ onSent, initialTo = '', initialSubject = '', initialBody = ''
                     />
 
                     {/* Attachment Zone */}
-                    <div style={{ height: '120px' }}>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span>📎</span> Attachments
                         </div>
 
                         <div style={{
-                            border: '2px dashed #333', borderRadius: '12px', padding: '0 20px', height: '100%',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            border: '2px dashed #333', borderRadius: '12px', padding: '16px',
+                            minHeight: '80px',
+                            display: 'flex', flexDirection: 'column', justifyContent: 'center',
                             background: 'rgba(255,255,255,0.01)',
-                            cursor: 'pointer'
+                            cursor: 'pointer', transition: 'border-color 0.2s'
                         }}
+                            className="hover:border-primary"
                             onClick={() => document.getElementById('file-upload').click()}
                         >
                             <input id="file-upload" type="file" style={{ display: 'none' }} multiple onChange={async (e) => {
@@ -366,20 +368,50 @@ const Compose = ({ onSent, initialTo = '', initialSubject = '', initialBody = ''
                             }} />
 
                             {attachments.length === 0 ? (
-                                <div style={{ color: '#9ca3af', textAlign: 'center' }}>
-                                    Drag & drop files here or <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>browse</span>
+                                <div style={{ color: '#9ca3af', textAlign: 'center', fontSize: '0.9rem' }}>
+                                    Drag & drop files here or <span style={{ color: '#10b981', fontWeight: 'bold' }}>browse</span>
                                 </div>
                             ) : (
-                                <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', width: '100%' }}>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                                     {attachments.map((f, i) => (
-                                        <div key={i} style={{ background: '#23242a', padding: '8px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', minWidth: '200px' }}>
-                                            <div style={{ width: '24px', height: '24px', background: '#7c3aed', borderRadius: '4px' }}></div>
-                                            <div className="flex-col" style={{ overflow: 'hidden' }}>
-                                                <span style={{ fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.name}</span>
+                                        <div key={i} style={{
+                                            background: '#23242a', padding: '8px 12px', borderRadius: '8px',
+                                            display: 'flex', alignItems: 'center', gap: '10px',
+                                            border: '1px solid #333', maxWidth: '100%'
+                                        }} onClick={(e) => e.stopPropagation()}>
+                                            <div style={{
+                                                width: '32px', height: '32px', background: '#7c3aed', borderRadius: '6px',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 'bold'
+                                            }}>
+                                                {f.name.split('.').pop().toUpperCase().slice(0, 3)}
                                             </div>
-                                            <span onClick={(e) => { e.stopPropagation(); setAttachments(attachments.filter((_, idx) => idx !== i)) }} style={{ marginLeft: 'auto', cursor: 'pointer', color: '#666' }}>×</span>
+                                            <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                                                <span style={{ fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '180px' }}>
+                                                    {f.name}
+                                                </span>
+                                                <span style={{ fontSize: '0.7rem', color: '#666' }}>
+                                                    {Math.round(f.size / 1024)} KB
+                                                </span>
+                                            </div>
+                                            <button
+                                                onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))}
+                                                style={{
+                                                    marginLeft: 'auto', background: 'transparent', border: 'none',
+                                                    color: '#666', cursor: 'pointer', fontSize: '1.2rem', padding: '0 5px'
+                                                }}
+                                                className="hover:text-red-500"
+                                            >
+                                                ×
+                                            </button>
                                         </div>
                                     ))}
+                                    <div style={{
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        width: '40px', height: '40px', borderRadius: '50%', border: '1px dashed #666', color: '#666',
+                                        fontSize: '1.2rem'
+                                    }}>
+                                        +
+                                    </div>
                                 </div>
                             )}
                         </div>

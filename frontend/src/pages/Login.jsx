@@ -23,7 +23,7 @@ const Login = () => {
                     if (res.data.user_email) {
                         localStorage.setItem('user_email', res.data.user_email);
                     }
-                    navigate('/');
+                    navigate('/dashboard');
                 }
             } catch (err) {
                 console.error("Google Auth Error:", err);
@@ -50,7 +50,7 @@ const Login = () => {
                 setIsRegister(false);
             } else {
                 await login(email, password);
-                navigate('/');
+                navigate('/dashboard');
             }
         } catch (err) {
             setError("Authentication failed.");
