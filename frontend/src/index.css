@@ -1,0 +1,272 @@
+:root {
+  /* Core Palette - Dark Gunmetal Theme */
+  --bg-color: #0f1014;
+  --panel-bg: #1a1b21;
+  --sidebar-bg: #131419;
+
+  /* Inputs */
+  --input-bg: #23242a;
+  --input-border: #2d2e36;
+
+  /* Accents */
+  --primary: #7c3aed;
+  /* The Purple from the image */
+  --primary-hover: #6d28d9;
+  --secondary: #10b981;
+  /* The Green from the image */
+  --danger: #ef4444;
+  --warning: #f59e0b;
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+
+  /* Utilities */
+  --border-radius: 12px;
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --transition: all 0.2s ease-in-out;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  min-height: 100vh;
+  /* Allow scrolling if content overflows viewport */
+  overflow: auto;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+/* 
+   GLASSPHILIC BUTTON SYSTEM 
+   Matches standard email client aesthetics (Gmail/Superhuman) but with Dark Mode
+*/
+
+.btn {
+  border: none;
+  cursor: pointer;
+  padding: 8px 16px;
+  /* Slightly tighter for toolbar feel */
+  border-radius: 18px;
+  /* Classic Pill Shape */
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* Primary Action */
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+/* Secondary / Ghost (Toolbar Buttons) */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* Subtle outline on hover */
+}
+
+/* Danger Action */
+.btn-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+
+.hover-bright:hover {
+  filter: brightness(1.1);
+}
+
+/* Inputs */
+input,
+select,
+textarea {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary);
+}
+
+/* Layout Utils */
+.flex-row {
+  display: flex;
+  align-items: center;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.gap-4 {
+  gap: 16px;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.text-muted {
+  color: var(--text-secondary);
+}
+
+/* Custom Badge */
+.badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-red {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.badge-green {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.badge-purple {
+  background: rgba(124, 58, 237, 0.2);
+  color: #a78bfa;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Quantum Tunnel Animation for Sending */
+@keyframes quantumTunnel {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+    border: 2px solid rgba(124, 58, 237, 0);
+  }
+
+  50% {
+    opacity: 1;
+    border: 2px solid rgba(124, 58, 237, 1);
+    box-shadow: 0 0 50px rgba(124, 58, 237, 0.5);
+  }
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+    border: 2px solid rgba(124, 58, 237, 0);
+  }
+}
+
+.animate-tunnel {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  top: 50%;
+  left: 50%;
+  margin-top: -100px;
+  margin-left: -100px;
+  animation: quantumTunnel 1.5s infinite ease-out;
+  pointer-events: none;
+  z-index: 100;
+}
+
+@keyframes flyOut {
+  0% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+
+  20% {
+    transform: translateX(-10%) scale(0.9);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(100vw) scale(0.5);
+    opacity: 0;
+  }
+}
+
+.animate-fly-out {
+  animation: flyOut 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}

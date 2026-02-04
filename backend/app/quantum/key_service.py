@@ -1,0 +1,73 @@
+import uuid
+from typing import Dict, Tuple
+from ..crypto.qrng import qrng_service
+
+# IN-MEMORY VOLATILE STORAGE (Simulating Quantum State / QKD Buffer)
+# This is NOT a database. If the server restarts, keys are lost (Secure!)
+# Map: key_id -> { "key": hex_str, "sender": email, "recipient": email }
+VOLATILE_KEY_STORE = {}
+
+def generate_qkd_key(sender: str, recipient: str, length_bytes: int) -> Tuple[str, str]:
+    """
+    Generates a Quantum Random Key using QRNG service and stores it in volatile memory.
+    Returns (key_id, key_hex).
+    """
+    # 1. Generate True Random Key
+    key_hex = qrng_service.generate_otp_key(length_bytes)
+    
+    # 2. Assign a unique ID
+    key_id = str(uuid.uuid4())
+    
+    # 3. Store in Buffer (Simulating QKD Link)
+    VOLATILE_KEY_STORE[key_id] = {
+        "key": key_hex,
+        "sender": sender,
+        "recipient": recipient,
+        "created_at": time.time()
+    }
+    
+    return key_id, key_hex
+
+def store_key_direct(sender: str, recipient: str, key_hex: str) -> Tuple[str, str]:
+    """
+    Stores an already generated key (e.g. for AES).
+    """
+    key_id = str(uuid.uuid4())
+    VOLATILE_KEY_STORE[key_id] = {
+        "key": key_hex,
+        "sender": sender,
+        "recipient": recipient,
+        "created_at": time.time()
+    }
+    return key_id, key_hex
+
+
+def retrieve_key(key_id: str, user_email: str) -> str:
+    """
+    Retrieves a key if the user is the sender or recipient.
+    """
+    record = VOLATILE_KEY_STORE.get(key_id)
+    if not record:
+        return None
+        
+    if user_email not in [record["sender"], record["recipient"]]:
+        return None  # Unauthorized
+    
+    # FORWARD SECRECY: If the recipient retrieves it, CONSUME the key (Delete it).
+    # Sender can peek for demo purposes, but real OTP means burn after reading.
+    # For this Hackathon Demo: 
+    # Let's allow Sender to read indefinitely? Or enforcing strict logic?
+    # Strict logic: user_email == recipient -> delete.
+    # If we delete it, the sender can't decrypt anymore in 'Sent' box.
+    # PROPOSAL: Keep it simple. Don't auto-delete for functionality of 'Sent' box viewing.
+    # BUT user insisted "Delete key after successful decrypt".
+    # Ok, we will implement strict deletion. This means 'Sent' box decryption might fail after recipient reads it.
+    # That is a feature: "The letter has been opened and the seal broken."
+    
+    if user_email == record["recipient"]:
+       del VOLATILE_KEY_STORE[key_id]
+
+    return record["key"]
+
+
+import time

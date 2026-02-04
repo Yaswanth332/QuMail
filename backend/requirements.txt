@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+qiskit
+qiskit-aer
+sqlalchemy
+pydantic
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+numpy
+google-auth
+requests
