@@ -76,8 +76,28 @@ export const generateKey = async () => {
 };
 
 // Encrypt data
-export const encryptAES = async (text, attachments = []) => {
-    const key = await generateKey();
+export const encryptAES = async (text, attachments = [], manualKeyHex = null) => {
+    let key;
+    let exportedKeyBase64;
+
+    if (manualKeyHex) {
+        // Use Pre-Generated Quantum Key
+        const keyBytes = new Uint8Array(manualKeyHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+        key = await window.crypto.subtle.importKey(
+            "raw",
+            keyBytes,
+            "AES-GCM",
+            true,
+            ["encrypt", "decrypt"]
+        );
+        exportedKeyBase64 = arrayBufferToBase64(keyBytes.buffer);
+    } else {
+        // Generate Local Key
+        key = await generateKey();
+        const exportedKey = await window.crypto.subtle.exportKey("raw", key);
+        exportedKeyBase64 = arrayBufferToBase64(exportedKey);
+    }
+
     const data = JSON.stringify({ body: text, attachments });
     const encodedData = stringToBytes(data);
 
@@ -88,17 +108,22 @@ export const encryptAES = async (text, attachments = []) => {
         encodedData
     );
 
-    const exportedKey = await window.crypto.subtle.exportKey("raw", key);
-
     return {
         ciphertext: arrayBufferToBase64(encryptedContent),
         iv: arrayBufferToBase64(iv),
-        key: arrayBufferToBase64(exportedKey) // Encapsulated Key (Simulated Transport)
+        key: exportedKeyBase64 // Encapsulated Key
     };
 };
 
-export const decryptAES = async (ciphertext, iv, keyBase64) => {
-    const keyData = base64ToArrayBuffer(keyBase64);
+export const decryptAES = async (ciphertext, iv, keyInput, keyFormat = 'base64') => {
+    let keyData;
+    if (keyFormat === 'hex') {
+        const bytes = new Uint8Array(keyInput.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+        keyData = bytes.buffer;
+    } else {
+        keyData = base64ToArrayBuffer(keyInput);
+    }
+
     const key = await window.crypto.subtle.importKey(
         "raw",
         keyData,

@@ -34,8 +34,8 @@ export const logout = () => {
     window.location.href = '/login';
 };
 
-export const sendEmail = async (to_email, subject, body, encryption_level, attachments = []) => {
-    return await api.post('/send_email', { to_email, subject, body, encryption_level, attachments });
+export const sendEmail = async (to_email, subject, body, encryption_level, attachments = [], key_id = null) => {
+    return await api.post('/send_email', { to_email, subject, body, encryption_level, attachments, key_id });
 };
 
 export const getInbox = async () => {
@@ -95,6 +95,20 @@ export const storeQKDKey = async (keyId, keyHex) => {
 
 export const retrieveQKDKey = async (keyId) => {
     return await api.get(`/qkd/retrieve_key/${keyId}`);
+};
+
+// NEW API FUNCTIONS FOR FEATURE REQUESTS
+
+export const generateKey = async (type, length, recipient) => {
+    return await api.post('/keys/generate', { type, length, recipient });
+};
+
+export const getKeyMetadata = async (keyId) => {
+    return await api.get(`/keys/${keyId}/metadata`);
+};
+
+export const discardKey = async (keyId) => {
+    return await api.post(`/keys/${keyId}/discard`);
 };
 
 export default api;

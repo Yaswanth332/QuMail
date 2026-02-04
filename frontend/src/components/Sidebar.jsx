@@ -30,6 +30,7 @@ const Sidebar = ({ currentView, setView }) => {
 
     const utilityItems = [
         { id: 'comparison', label: 'Demo Mode', icon: '📊' },
+        { id: 'visualization', label: 'Quantum Concepts (Demo)', icon: '🌌' },
         { id: 'settings', label: 'Settings', icon: '⚙️' },
     ];
 

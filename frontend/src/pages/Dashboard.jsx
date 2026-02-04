@@ -7,7 +7,7 @@ import EmailView from '../components/EmailView';
 import DemoMode from '../components/DemoMode'; // Updated import
 import QKDStatusPanel from '../components/QKDStatusPanel';
 import QRNGPanel from '../components/QRNGPanel';
-import KeyManagerPanel from '../components/KeyManagerPanel';
+import QuantumVisualizer from '../components/QuantumVisualizer';
 
 const ProfileMenu = ({ userEmail }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -211,16 +211,18 @@ const Dashboard = () => {
                     {view === 'trash' && <Inbox folder="trash" onSelectEmail={handleSelectEmail} />}
                     {view === 'decrypt' && <div style={{ color: 'white', padding: '20px' }}>Decrypt Interface (Use Inbox)</div>}
 
-                    {/* Updated Settings View to include Panels */}
+                    {/* Restored Settings View */}
                     {view === 'settings' && (
                         <div style={{ color: 'white', padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
                             <h2 style={{ margin: 0 }}>System Utilities</h2>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                            <div style={{ width: '100%', maxWidth: '800px' }}>
                                 <QRNGPanel />
-                                <KeyManagerPanel />
                             </div>
                         </div>
                     )}
+
+                    {/* New Visualization View */}
+                    {view === 'visualization' && <QuantumVisualizer />}
 
                     {/* DEMO MODE: Replaced ComparisonView with DemoMode */}
                     {view === 'comparison' && <DemoMode />}
