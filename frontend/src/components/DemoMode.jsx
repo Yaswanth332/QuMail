@@ -57,6 +57,9 @@ const DemoMode = () => {
             </div>
 
             <div className="glass-panel" style={{ padding: '40px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '20px', color: '#6b7280', fontSize: '0.8rem', fontStyle: 'italic' }}>
+                    * This simulation is for educational purposes and does not affect your actual encrypted email traffic.
+                </div>
 
                 {/* Controls */}
                 <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', justifyContent: 'center' }}>
@@ -82,7 +85,7 @@ const DemoMode = () => {
                     height: '200px', background: '#000', borderRadius: '16px', marginBottom: '30px',
                     position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center'
                 }}>
-                    <div style={{ position: 'absolute', top: '10px', left: '10px', fontSize: '0.8rem', color: '#444' }}>SIMULATION ENV</div>
+                    <div style={{ position: 'absolute', top: '10px', left: '10px', fontSize: '0.8rem', color: '#444' }}>EDUCATIONAL SIMULATION</div>
 
                     {/* Actors */}
                     <div style={{ width: '80%', height: '2px', background: '#333', position: 'absolute' }}></div>

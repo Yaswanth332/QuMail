@@ -43,7 +43,7 @@ const QRNGPanel = () => {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
                 <div className="flex-col">
                     <span style={{ fontSize: '0.75rem', color: '#999' }}>SOURCE</span>
-                    <span style={{ fontWeight: 'bold' }}>Quantum Random Number Generator</span>
+                    <span style={{ fontWeight: 'bold' }}>Quantum Circuit Simulator (Qiskit)</span>
                 </div>
                 <div className="flex-col">
                     <span style={{ fontSize: '0.75rem', color: '#999' }}>NIST SP 800-22</span>

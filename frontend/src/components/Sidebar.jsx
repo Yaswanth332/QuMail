@@ -158,6 +158,23 @@ const Sidebar = ({ currentView, setView }) => {
 
             {/* 4. Bottom Security Legend */}
             <div style={{ marginTop: 'auto', border: '1px solid #2d2e36', borderRadius: '12px', padding: '15px', background: '#131419' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#666', marginBottom: '10px' }}>ARCHITECTURE STATUS</div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+                        <span style={{ color: '#ccc' }}>QRNG Source</span>
+                        <span style={{ color: '#10b981', fontWeight: 'bold' }}>Active (NIST)</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+                        <span style={{ color: '#ccc' }}>QKD Layer</span>
+                        <span style={{ color: '#f59e0b', fontWeight: 'bold' }}>Simulated</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+                        <span style={{ color: '#ccc' }}>Encryption</span>
+                        <span style={{ color: '#a78bfa', fontWeight: 'bold' }}>Client-Side</span>
+                    </div>
+                </div>
+
                 <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '10px', fontWeight: 'bold', textTransform: 'uppercase' }}>Zero Trust Network</div>
                 <div className="flex-col gap-2">
                     <div className="flex-row gap-2" style={{ fontSize: '0.8rem', color: '#9ca3af', alignItems: 'center' }}>

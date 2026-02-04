@@ -84,4 +84,17 @@ export const getEmailCounts = async () => {
     return await api.get('/counts');
 };
 
+export const getQKDKey = async (length = 32) => {
+    return await api.get(`/keys/qkd?length=${length}`);
+};
+
+// SIMULATED QKD NODE INTERACTION
+export const storeQKDKey = async (keyId, keyHex) => {
+    return await api.post('/qkd/store_key', { key_id: keyId, key_hex: keyHex });
+};
+
+export const retrieveQKDKey = async (keyId) => {
+    return await api.get(`/qkd/retrieve_key/${keyId}`);
+};
+
 export default api;

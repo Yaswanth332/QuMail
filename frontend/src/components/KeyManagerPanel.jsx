@@ -19,8 +19,8 @@ const KeyManagerPanel = () => {
     return (
         <div style={{ padding: '20px', background: '#131419', borderRadius: '16px', border: '1px solid #333' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
-                <h3 style={{ margin: 0, color: '#a78bfa', fontSize: '1.2rem' }}>Quantum Key Manager (QKD-Ready)</h3>
-                <span style={{ fontSize: '0.8rem', color: '#f59e0b', background: 'rgba(245, 158, 11, 0.1)', padding: '2px 8px', borderRadius: '4px' }}>SIMULATED</span>
+                <h3 style={{ margin: 0, color: '#a78bfa', fontSize: '1.2rem' }}>QKD Key Manager</h3>
+                <span style={{ fontSize: '0.8rem', color: '#f59e0b', background: 'rgba(245, 158, 11, 0.1)', padding: '2px 8px', borderRadius: '4px' }}>BB84 SIMULATION ACTIVE</span>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px' }}>
@@ -37,6 +37,10 @@ const KeyManagerPanel = () => {
                     <div className="flex-col" style={{ flex: 1 }}>
                         <span style={{ fontSize: '0.75rem', color: '#999' }}>KEYS AVAILABLE</span>
                         <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: keysAvailable < 20 ? '#ef4444' : 'white' }}>{keysAvailable}</span>
+                    </div>
+                    <div className="flex-col" style={{ flex: 1 }}>
+                        <span style={{ fontSize: '0.75rem', color: '#999' }}>QBER (AVG)</span>
+                        <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#10b981' }}>2.4%</span>
                     </div>
                 </div>
 

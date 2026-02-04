@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { decryptEmail } from '../api';
-import { decryptClientSide } from '../cryptoUtils';
+import { decryptEmail, retrieveQKDKey } from '../api';
+import { decryptAES, decryptOTP } from '../cryptoUtils';
 
 const EmailView = ({ email, onBack, onReply, onForward, onDelete }) => {
     const [decryptedBody, setDecryptedBody] = useState(null);
@@ -29,22 +29,70 @@ const EmailView = ({ email, onBack, onReply, onForward, onDelete }) => {
             const res = await decryptEmail(email.id);
 
             // Client-Side Decryption Handling
-            if (email.encryption_level === 'client_aes') {
+            if (email.encryption_level === 'client_aes' || email.encryption_level === 'otp_client' || email.encryption_level === 'otp') {
                 // The backend returns the raw blind ciphertext as 'body_plaintext' because it didn't decrypt it
-                // We parse it as a JSON payload containing ciphertext, IV, and seed
-                const blob = JSON.parse(res.data.body_plaintext);
+                let blob;
+                try {
+                    blob = JSON.parse(res.data.body_plaintext);
+                } catch (e) {
+                    console.warn("Failed to parse body_plaintext as JSON, treating as raw text.", e);
+                    setDecryptedBody(res.data.body_plaintext);
+                    setAttachments([]);
+                    setLoading(false);
+                    return;
+                }
 
-                // Perform local decryption
-                // NOTE: 'seed' here represents the exchanged key (simulated transport)
-                const decryptedJson = await decryptClientSide(blob.ciphertext, blob.iv, blob.seed);
+                // --- ISSUE 1 FIX: Retrieve Key from SEPARATE QKD Trusted Node ---
+                // We do NOT use a key from the blob (Issue 1 Option A/B Hybrid). 
+                // We fetch it by ID.
 
-                // The result is the original {body, attachments} bundle
-                // Note: decryptClientSide returns an Object in our utils, not a string JSON
-                // Wait, utils returns JSON.parse() of the string. So it IS an object.
-                const bundle = decryptedJson;
+                // For legacy support (if user sends old email format), we check blob.key/simulated_key_transport first
+                let keyToUse = blob.simulated_key_transport || blob.key;
 
-                setDecryptedBody(String(bundle.body));
-                setAttachments(bundle.attachments || []);
+                if (!keyToUse && blob.keyId) {
+                    console.log("Fetching key from QKD Store with ID:", blob.keyId);
+                    try {
+                        const keyRes = await retrieveQKDKey(blob.keyId);
+                        keyToUse = keyRes.data.key;
+                    } catch (keyErr) {
+                        throw new Error("SECURE KEY RETRIEVAL FAILED. The key may have expired (Ephemeral) or requires biometric auth.");
+                    }
+                }
+
+                if (!keyToUse) {
+                    throw new Error("NO KEY AVAILABLE. Message cannot be decrypted.");
+                }
+
+                if (email.encryption_level === 'otp_client' || email.encryption_level === 'otp') {
+                    // OTP Decryption
+                    try {
+                        const decryptedText = await decryptOTP(blob.ciphertext, keyToUse);
+
+                        try {
+                            const bundle = JSON.parse(decryptedText);
+                            setDecryptedBody(bundle.body);
+                            setAttachments(bundle.attachments || []);
+                        } catch (e) {
+                            setDecryptedBody(decryptedText);
+                            setAttachments([]);
+                        }
+                    } catch (e) {
+                        console.error("OTP Decrypt Failed", e);
+                        setDecryptedBody(`[DECRYPTION ERROR]: ${e.message}`);
+                        setAttachments([]);
+                    }
+                } else {
+                    // AES Decryption
+                    try {
+                        const bundle = await decryptAES(blob.ciphertext, blob.iv, keyToUse);
+                        setDecryptedBody(String(bundle.body));
+                        setAttachments(bundle.attachments || []);
+                    } catch (e) {
+                        console.error("AES Decrypt Failed", e);
+                        setDecryptedBody(`[AES DECRYPTION ERROR]: ${e.message}`);
+                        setAttachments([]);
+                    }
+                }
             } else {
                 // Server-Side Decryption (Legacy / Fallback)
                 const body = res.data && res.data.body_plaintext ? String(res.data.body_plaintext) : "";
@@ -53,7 +101,7 @@ const EmailView = ({ email, onBack, onReply, onForward, onDelete }) => {
             }
         } catch (e) {
             console.error("Decryption Error", e);
-            setDecryptedBody("** [DECRYPTION FAILED: QUANTUM KEY EXPIRED OR WRONG PASSPHRASE] **");
+            setDecryptedBody(`** [DECRYPTION FAILED: ${e.message}] **`);
         } finally {
             setLoading(false);
         }
@@ -176,7 +224,17 @@ const EmailView = ({ email, onBack, onReply, onForward, onDelete }) => {
                                         <h4 className="text-muted" style={{ marginBottom: '16px' }}>Attachments ({attachments.length})</h4>
                                         <div className="flex-row gap-4 flex-wrap">
                                             {attachments.map((file, idx) => (
-                                                <div key={idx} className="glass" style={{ padding: '12px 16px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+                                                <div key={idx} className="glass"
+                                                    style={{ padding: '12px 16px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+                                                    onClick={() => {
+                                                        if (file.data) {
+                                                            const win = window.open();
+                                                            win.document.write(
+                                                                `<iframe src="${file.data}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`
+                                                            );
+                                                        }
+                                                    }}
+                                                >
                                                     <span style={{ fontSize: '1.5rem' }}>📄</span>
                                                     <div className="flex-col">
                                                         <span style={{ fontWeight: '500' }}>{file.name}</span>

@@ -94,12 +94,12 @@ const Login = () => {
                         }}>🛡️</div>
                         <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>QuMail</h1>
                         <p style={{ color: '#aaa', lineHeight: '1.6', fontSize: '1.1rem' }}>
-                            The world's first <span style={{ color: '#10b981', fontWeight: 'bold' }}>Quantum-Safe</span> email platform.
+                            The world's first <span style={{ color: '#10b981', fontWeight: 'bold' }}>QKD-Ready</span> secure email platform.
                             Protect your communications with the laws of physics.
                         </p>
                         <div style={{ marginTop: '40px', display: 'flex', gap: '20px' }}>
                             <div className="flex-row gap-2" style={{ color: '#fff', fontSize: '0.9rem' }}>
-                                <span style={{ color: '#10b981' }}>✓</span> QKD Keys
+                                <span style={{ color: '#10b981' }}>✓</span> Simulated QKD
                             </div>
                             <div className="flex-row gap-2" style={{ color: '#fff', fontSize: '0.9rem' }}>
                                 <span style={{ color: '#10b981' }}>✓</span> Zero Trust

@@ -171,17 +171,26 @@ const Dashboard = () => {
                         <div style={{
                             background: '#1a1b21', border: '1px solid #333', borderRadius: '20px',
                             padding: '6px 16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem'
-                        }}>
-                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></span>
-                            Quantum Key Infrastructure (Simulation)
+                        }} title="Encryption happens in your browser, not the server.">
+                            <span style={{ fontSize: '1rem' }}>🛡️</span>
+                            Client-Side Encryption
                         </div>
+
+                        <div style={{
+                            background: '#1a1b21', border: '1px solid #333', borderRadius: '20px',
+                            padding: '6px 16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem'
+                        }} title="Server cannot read your messages.">
+                            <span style={{ fontSize: '1rem' }}>👁️‍🗨️</span>
+                            Zero-Knowledge Server
+                        </div>
+
                         <div style={{
                             background: 'rgba(16, 185, 129, 0.1)', border: '1px solid #10b981', borderRadius: '20px',
                             padding: '6px 16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: '#10b981', fontWeight: 'bold',
                             cursor: 'pointer'
                         }} onClick={() => setView('qkd_sim')}>
                             <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 5px #10b981' }}></span>
-                            {mockQKDKey ? 'QKD Architecture Ready' : 'QKD Architecture Ready'}
+                            QKD Network (Simulated)
                         </div>
                     </div>
 
@@ -242,7 +251,7 @@ const Dashboard = () => {
                     position: 'absolute', bottom: '5px', left: '0', right: '0',
                     textAlign: 'center', fontSize: '0.65rem', color: '#444', pointerEvents: 'none'
                 }}>
-                    “This system uses NIST-validated quantum randomness for encryption key generation, with a QKD-ready architecture for secure key distribution, ensuring end-to-end confidentiality over classical communication networks.”
+                    “This system uses Quantum circuit–simulated randomness for encryption key generation, with a QKD-ready architecture (simulated) for secure key distribution, ensuring end-to-end confidentiality over classical communication networks.”
                 </div>
 
             </div>

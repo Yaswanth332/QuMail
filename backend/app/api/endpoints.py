@@ -14,6 +14,43 @@ import requests # standard requests
 
 router = APIRouter()
 
+# --- SIMULATED QKD TRUSTED NODE ---
+# In a real architecture, this would be a separate piece of hardware/server.
+# We simulate it here to demonstrate ARCHITECTURAL SEPARATION.
+# The Email Server (Database) NEVER sees these keys, only the Key IDs.
+QKD_KEY_STORE = {} 
+
+class QKDKeyStoreRequest(BaseModel):
+    key_id: str
+    key_hex: str
+
+@router.post("/qkd/store_key")
+def store_qkd_key(payload: QKDKeyStoreRequest):
+    """
+    Simulates Alice pushing a key to the QKD Trusted Node.
+    """
+    QKD_KEY_STORE[payload.key_id] = payload.key_hex
+    return {"msg": "Key stored in QKD Node"}
+
+@router.get("/qkd/retrieve_key/{key_id}")
+def retrieve_qkd_key(key_id: str):
+    """
+    Simulates Bob pulling the key from the QKD Trusted Node.
+    SECURITY CRITICAL: Key is DELETED immediately after retrieval to ensure Forward Secrecy.
+    The intermediate node (this server) does not retain the key.
+    """
+    key = QKD_KEY_STORE.get(key_id)
+    if not key:
+        raise HTTPException(status_code=404, detail="Key expired or not found in QKD Node")
+    
+    # --- SECURITY: EPHEMERAL DELETION ---
+    del QKD_KEY_STORE[key_id]
+    print(f"[SECURE LOG] Key {key_id} retrieved by Recipient and PURGED from QKD Node memory.")
+    # ------------------------------------
+
+    # In real QKD, this would authenticate Bob.
+    return {"key": key}
+
 # --- Pydantic Models ---
 class UserCreate(BaseModel):
     email: str
@@ -43,7 +80,8 @@ class EmailResponse(BaseModel):
     subject: str
     sent_at: str
     is_encrypted: bool
-    
+    encryption_level: str = "none" # Added field
+
 class DecryptedEmail(BaseModel):
     id: int
     subject: str
@@ -167,10 +205,14 @@ def send_email(
         
     elif request.encryption_level == "client_aes":
         # Client Side Encryption - Server stores blind ciphertext
-        # Code: "Store ciphertext only"
         encrypted_body = request.body 
-        key_id = "CLIENT-SIDE-KEYS" # Keys are transported in payload for this demo
+        key_id = "CLIENT-SIDE-KEYS" 
         
+    elif request.encryption_level == "otp_client":
+        # Client Side OTP (Vernam Cipher) - Server stores blind ciphertext
+        encrypted_body = request.body
+        key_id = "OTP-DEMO-KEYS"
+
     else:
         encrypted_body = payload_str
 
@@ -190,8 +232,6 @@ def send_email(
     database.commit()
     return {"msg": "Email sent secured!", "encryption": request.encryption_level}
 
-
-
 @router.get("/inbox", response_model=List[EmailResponse])
 def get_inbox(
     current_user: models.User = Depends(auth.get_current_user),
@@ -210,7 +250,8 @@ def get_inbox(
             sender=e.sender,
             subject=e.subject,
             sent_at=str(e.sent_at),
-            is_encrypted=(e.encryption_level != "none")
+            is_encrypted=(e.encryption_level != "none"),
+            encryption_level=e.encryption_level or "none"
         ))
     return response
 
@@ -231,7 +272,8 @@ def get_sent(
             sender=f"To: {e.recipient}", 
             subject=e.subject,
             sent_at=str(e.sent_at),
-            is_encrypted=(e.encryption_level != "none")
+            is_encrypted=(e.encryption_level != "none"),
+            encryption_level=e.encryption_level or "none"
         ))
     return response
 
@@ -251,7 +293,8 @@ def get_trash(
             sender=e.sender if e.recipient == current_user.email else f"To: {e.recipient}",
             subject=e.subject,
             sent_at=str(e.sent_at),
-            is_encrypted=(e.encryption_level != "none")
+            is_encrypted=(e.encryption_level != "none"),
+            encryption_level=e.encryption_level or "none"
         ))
     return response
 
@@ -272,7 +315,8 @@ def get_spam(
             sender=e.sender,
             subject=e.subject,
             sent_at=str(e.sent_at),
-            is_encrypted=(e.encryption_level != "none")
+            is_encrypted=(e.encryption_level != "none"),
+            encryption_level=e.encryption_level or "none"
         ))
     return response
 
@@ -293,7 +337,8 @@ def get_drafts(
             sender=e.recipient, 
             subject=e.subject,
             sent_at=str(e.sent_at),
-            is_encrypted=(e.encryption_level != "none")
+            is_encrypted=(e.encryption_level != "none"),
+            encryption_level=e.encryption_level or "none"
         ))
     return response
 
@@ -368,7 +413,7 @@ def decrypt_email(
                  except:
                     email_msg.subject = "[Subject Decryption Failed]"
 
-    elif email_msg.encryption_level == "client_aes":
+    elif email_msg.encryption_level == "client_aes" or email_msg.encryption_level == "otp_client":
         try:
              raw_att = json.loads(email_msg.attachments) if email_msg.attachments else []
         except:
@@ -443,6 +488,16 @@ def establish_qkd_key(key_length: int = 128, eve: bool = False):
 def get_quantum_seed():
     seed_hex = qrng.qrng_service.generate_otp_key(32)
     return {"seed": seed_hex}
+
+@router.get("/keys/qkd")
+def get_qkd_key(length: int = 32):
+    """
+    Simulates fetching a key from the Quantum Key Distribution network.
+    In a real system, this would retrieve a pre-established key shared with the recipient.
+    """
+    # For demo purposes, we generate it on demand using QRNG
+    key_hex = qrng.qrng_service.generate_otp_key(length)
+    return {"key": key_hex, "id": f"QKD-{int(time.time()*1000)}"}
 
 @router.get("/comparison/live")
 def get_comparison_data(bits: int = 128):
