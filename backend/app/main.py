@@ -1,16 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import db
-from .api import endpoints
 
 # Initialize DB tables
 db.init_db()
 
 app = FastAPI(title="QuMail Backend", version="1.0.0")
 
-# CORS (Allow Frontend)
+# 🔴 CORS MUST COME HERE — BEFORE ROUTERS
 origins = [
-    "http://localhost:5173",
+    "https://qu-mail-mkdo.vercel.app",
+    "http://localhost:5173",   # optional (local dev)
     "http://127.0.0.1:5173",
 ]
 
@@ -22,6 +22,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ⬇️ ONLY AFTER CORS
+from .api import endpoints
 app.include_router(endpoints.router, prefix="/api")
 
 @app.get("/")
